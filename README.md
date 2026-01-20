@@ -1,0 +1,6 @@
+
+This script implements an end-to-end microgrid fault detection and multi-class classification pipeline using OpenDSS-exported current measurements. It loads labeled datasets (Normal, 3-Phase, Line-to-Line, and Line-to-Ground), performs dataset-aware cleaning (drops `Unnamed:*`/location columns, trims headers, coerces numeric types, imputes missing values), applies IQR-based outlier capping, and reduces measurement noise using a Savitzky–Golay filter.
+
+Next, it generates robust statistical and circular features (e.g., magnitude mean/std/skew/kurtosis, angle circular standard deviation, and magnitude–angle ratio). To prevent leakage, train/test splitting is stratified (80/20) and all operations such as class balancing (median-size resampling), feature scoring/selection (ANOVA SelectKBest), and RobustScaler normalization are fitted on training data only.
+
+The classifier is a soft-voting ensemble combining XGBoost and ExtraTrees, evaluated with 5-fold cross-validation, detailed metrics, and a confusion matrix. The trained model, scaler, selector, and feature order are saved with `joblib` for reproducible deployment-time inference, including confidence-thresholded predictions and optional fault-location extraction if a location column exists.
